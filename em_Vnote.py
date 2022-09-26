@@ -15,11 +15,11 @@ import em_module as em
 import em_req
 
 # 配置窗口的生成
-def create_setting(event):
+def view_setting(topMsg):
     top = tk.Toplevel()
     top.title("emPost 配置")
 
-    width = 200
+    width = 250
     height = 170
     screenwidth = top.winfo_screenwidth()
     screenheight = top.winfo_screenheight()
@@ -35,12 +35,13 @@ def create_setting(event):
 
     def saveInfo():
         if em.save_config(akEText.get(), urlEText.get()) == "true" :
-            tm.showinfo("", "保存成功！请自行重启软件以应用")
+            tm.showinfo("", "保存成功！")
+            topMsg.set(em.url)
         else:
-            tm.showinfo("", "保存失败!")
+            tm.showinfo("", "保存失败！")
 
     msg1 = tk.Label(top, text="API 秘钥：",font=('宋体',14))
-    msg1.pack(anchor="w",padx="10px")
+    msg1.pack(anchor="w",padx="30px")
 
     akE = tk.Entry(top)
     akEText = tk.StringVar()
@@ -50,7 +51,7 @@ def create_setting(event):
     akE.insert(0,apikey)
 
     msg2 = tk.Label(top, text="站点（加 https:// ）：",font=('宋体',14))
-    msg2.pack(anchor="w",padx="10px")
+    msg2.pack(anchor="w",padx="30px")
 
     urlE = tk.Entry(top)
     urlEText = tk.StringVar()
@@ -170,6 +171,10 @@ def note_view():
     labelMsg.bind("<Button-1>",open_url)
     labelMsg.pack(pady = "7px")
 
+    # 点击 配置 按钮后
+    def create_setting(event) :
+        view_setting(topMsg)
+
     # 文本输入框属性
     text = tk.Text(window, width=50, font = tf.Font(size=16), fg ="#5a5c69", height=10,
                    padx = 5,pady = 5, undo=True, autoseparators=False,borderwidth = "0px")
@@ -206,7 +211,7 @@ def note_view():
     lReading.bind('<Leave>',change_color6)
     lReading.grid(row = 0, column=2)
     
-    frame_left.pack()
+    frame_left.pack(pady="5px")
 
     window.mainloop()
     return
