@@ -1,5 +1,6 @@
 # 运行库
  
+from glob import glob
 import hashlib
 import time
 import os
@@ -9,7 +10,9 @@ apikey = ""
 url    = ""
 version= ""
 
-# ------------------- 
+# 配置文件地址
+# configUrl = "/empost_config.json" # win
+configUrl = "/Applications/empost_config.json" # mac
 
 # 读取文件
 def readfile(url):
@@ -55,26 +58,25 @@ def makefile(url,text):
     f.close
     return 'ok'
 
-
-makefile(os.getcwd() + "/ab.txt","hello")
-
-# ------------------- 
-
 # 获取配置
 def reConfig():
-    # configFile = open("config.json", encoding = "utf-8")
-    # txt = configFile.read()
-    # configFile.close()
-
-    txt = '{"apikey":"","url":"https://www.ccgxk.com","version":"1.0.0"}';
-    configJson = eval(txt)
+    if existfile(configUrl) == 'false' :
+        makefile(configUrl,
+            '{ \
+            "apikey":"", \
+            "url":"请点击下方配置，填入您的信息", \
+            "version":"1.0.0",  \
+            "readme":"本 JSON 文件为 empost 软件生成的配置文件（因 pyinstaller 打包软件的缺陷，无奈必须把配置写于此），请勿删除，感谢"} \
+            ')
+    cofigText = readfile(configUrl)
+    configJson = eval(cofigText)
 
     global apikey,url,version
     apikey = configJson["apikey"]
     url    = configJson["url"]
     version= configJson["version"]
 
-    version= os.getcwd()
+    # version= os.getcwd()
 
 reConfig()
 
@@ -97,5 +99,17 @@ def make_sign(time):
     signSource = hashlib.md5(bytes(signSource,encoding = 'utf-8'))
     return signSource.hexdigest()
 
-
-    
+def save_config(akText, urlText):
+    global apikey,url
+    if written(configUrl,
+        '{ \
+            "apikey":"' + akText + '", \
+            "url":"' + urlText + '", \
+            "version":"1.0.0",  \
+            "readme":"本 JSON 文件为 empost 软件生成的配置文件（因 pyinstaller 打包软件的缺陷，无奈必须把配置写于此），请勿删除，感谢" \
+         }' \
+        ) == "error" :
+            return "false"
+    apikey = akText
+    url = urlText
+    return "true"
